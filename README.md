@@ -5,7 +5,7 @@
 This project is my graduation project.
 The main topic of this project is the development of a precision landing system for drone.
 
-## rule of commit message
+## Rule of commit message
 
 # Structure
 [Type][Scope]:[Subject]
