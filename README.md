@@ -1,4 +1,4 @@
-### Capstone Design 
+# Capstone Design 
 
 ## Description of this project
 
@@ -7,12 +7,12 @@ The main topic of this project is the development of a precision landing system 
 
 ## Rule of commit message
 
-# Structure
+### Structure
 [Type][Scope]:[Subject]
 [Body]
 [Footer]
 
-# Types of Data
+### Types of Data
 |Type name|Description|
 |---------|-----------|
 |feat|add new feature|
