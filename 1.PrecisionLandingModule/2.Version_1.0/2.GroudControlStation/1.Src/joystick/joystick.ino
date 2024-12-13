@@ -23,27 +23,36 @@ Joystick_ Joystick(JOYSTICK_DEFAULT_REPORT_ID,
   JOYSTICK_TYPE_MULTI_AXIS, 2, 0,
   true, true, false, false, false, false,
   true, true, false, false, false);
+  
+unsigned int g_uHeartBeatCount = 0;
+const bool g_bTestAutoSendMode = false;
+unsigned int g_uJoyPrevValues[JOY_TYPE_END] = {0,};
+uint8_t g_u8Prev_switchValues[HW_COMMON_SWITCH_COUNT_MAX] = {0,};
+unsigned int g_uJoyRealRangeValues[JOY_TYPE_END][JOY_REAL_RANGE_IDX_MAX] = {  {JOY_RANGE_MAX, JOY_RANGE_MIN, (unsigned int)(JOY_RANGE / 2)}, {JOY_RANGE_MAX, JOY_RANGE_MIN, (unsigned int)(JOY_RANGE / 2)}, {JOY_RANGE_MAX, JOY_RANGE_MIN, (unsigned int)(JOY_RANGE / 2)}, {JOY_RANGE_MAX, JOY_RANGE_MIN, (unsigned int)(JOY_RANGE / 2)}};
+uint8_t g_u8InitJoyMode = JOY_MODE_2; // Default configuration is Mode 2.
+/* Private function prototypes -----------------------------------------------*/
+/* USER CODE BEGIN PFP */
 
+void init_ADC();
+bool mappingJoystickValues(unsigned int *, uint8_t );
 void init_JoyRange();
 bool getJoystickValues(unsigned int *, uint8_t );
 bool getSwitchValues(uint8_t *);
+bool setJoystickValues(unsigned int *, uint8_t *);
+void print_Joyval(unsigned int *);
+void print_SWval(uint8_t *u8SwitchValues);
+void Invert_Joyval(unsigned int *, JOY_TYPE);
 
-
-
-/* Private function prototypes -----------------------------------------------*/
-/* USER CODE BEGIN PFP */
-unsigned int g_uJoyPrevValues[JOY_TYPE_END] = {0,};
-uint8_t g_u8Prev_switchValues[HW_COMMON_SWITCH_COUNT_MAX] = {0,};
-void init_ADC();
-bool mappingJoystickValues(unsigned int *, uint8_t );
 
 void setup() { 
   // put your setup code here, to run once:
 #if DBG_PRINT_JOYSTICK_DATA
   Serial.begin(115200);
 #endif
+  if(g_bTestAutoSendMode) Joystick.begin();
   delay(10);
   init_ADC();
+  init_JoyRange();
 }
 
 void loop() {
@@ -64,8 +73,7 @@ void loop() {
 
     print_Joyval(uJoyValues);
     print_SWval(u8SwitchValues);
-    if (g_bTestAutoSendMode == false)
-      g_joystick.sendState();
+    if (g_bTestAutoSendMode == false) Joystick.sendState();
   }
 
   if (g_uHeartBeatCount++ == 1000)
@@ -79,17 +87,11 @@ void loop() {
 
 void init_ADC()
 {
-  if (g_nJoystickType == JOY_HW_DESIGN_4)
-  {
-    //analogReference(EXTERNAL);
-    analogReference(DEFAULT);
-    
-  }
-  return;
+  analogReference(DEFAULT);
 }
 
 void init_JoyRange(){
-  // Set value range of the g_joystick.
+  // Set value range of the Joystick.
   Joystick.setXAxisRange(JOY_RANGE_MIN, JOY_RANGE_MAX);
   Joystick.setYAxisRange(JOY_RANGE_MIN, JOY_RANGE_MAX);
   Joystick.setZAxisRange(JOY_RANGE_MIN, JOY_RANGE_MAX);
@@ -104,8 +106,7 @@ bool getJoystickValues(unsigned int *pJoyVal, uint8_t u8CalCount)
 {
   bool bDiffJoyState = false;
   for (uint8_t nIdxJoy = 0; nIdxJoy <= 4; nIdxJoy++){
-    if (nIdxJoy == JOY_TYPE_Z_GIMBAL) pJoyVal[nIdxJoy] = analogRead(JOY_Z_GIMBAL_PIN_EX);
-    else pJoyVal[nIdxJoy] = analogRead(JOY_BASE_PIN + nIdxJoy); // + g_nJoyOffsets[nIdxJoy];
+    pJoyVal[nIdxJoy] = analogRead(JOY_BASE_PIN + nIdxJoy); // + g_nJoyOffsets[nIdxJoy];
 
     if (g_uJoyPrevValues[nIdxJoy] != pJoyVal[nIdxJoy]){
       bDiffJoyState = true;
@@ -120,9 +121,9 @@ bool getSwitchValues(uint8_t *updateValues){
   bool retDiffState = false;
   int nButtonIoCount = 0;
 
-  uint8_t updateValues[HW_COMMON_SWITCH_COUNT_MAX] = {0,}; 
+  uint8_t SW_updateValues[HW_COMMON_SWITCH_COUNT_MAX] = {0,}; 
   for (uint8_t idx = HW_COMMON_SWITCH_START; idx <= HW_COMMON_SWITCH_END; idx++){
-    updateValues[idx - HW_COMMON_SWITCH_START] = digitalRead(idx);
+    SW_updateValues[idx - HW_COMMON_SWITCH_START] = digitalRead(idx);
     
   }
   return retDiffState;
@@ -168,4 +169,59 @@ bool mappingJoystickValues(unsigned int *pJoyVal, uint8_t u8CalCount)
     }
     #endif
   }
+}
+
+bool setJoystickValues(unsigned int *pJoyVal, uint8_t *pBtnVal)
+{
+  if (g_u8InitJoyMode == JOY_MODE_2)
+  {
+    Joystick.setRudder(pJoyVal[JOY_TYPE_RUDDER]);
+    Joystick.setThrottle(pJoyVal[JOY_TYPE_THROTTLE]);
+    Joystick.setXAxis(JOY_RANGE_MAX - pJoyVal[JOY_TYPE_X_AXIS]);
+    Joystick.setYAxis(pJoyVal[JOY_TYPE_Y_AXIS]);
+  }
+  else if (g_u8InitJoyMode == JOY_MODE_1)
+  {
+    Joystick.setRudder(pJoyVal[JOY_TYPE_RUDDER]);
+    Joystick.setThrottle(pJoyVal[JOY_TYPE_Y_AXIS]);
+    Joystick.setXAxis(JOY_RANGE_MAX - pJoyVal[JOY_TYPE_X_AXIS]);
+    Joystick.setYAxis(JOY_RANGE_MAX - pJoyVal[JOY_TYPE_THROTTLE]);
+  }
+
+  for (uint8_t idx = HW_COMMON_SWITCH_START; idx < HW_COMMON_SWITCH_COUNT_MAX; idx++)
+  {
+    Joystick.setButton(idx, (pBtnVal[idx] == 0) ? 1 : 0);
+  }
+}
+void print_Joyval(unsigned int *uJoyValues)
+{
+#if DBG_PRINT_JOYSTICK_DATA
+  Serial.print("[SEND] ");
+  // Update current state
+  for (uint8_t nIdxJoy = 0; nIdxJoy < JOY_TYPE_END; nIdxJoy++)
+  {
+    Serial.print("A");
+    Serial.print(nIdxJoy);
+    Serial.print(": ");
+    Serial.print(uJoyValues[nIdxJoy]);
+
+    if (nIdxJoy != JOY_TYPE_END - 1)
+      Serial.print(", ");
+  }
+#endif
+}
+
+void print_SWval(uint8_t *u8SwitchValues)
+{
+#if DBG_PRINT_JOYSTICK_DATA
+  Serial.print("|| switchs: ");
+  for (uint8_t idx = HW_COMMON_SWITCH_START; idx < HW_COMMON_SWITCH_COUNT_MAX; idx++)
+  {
+    Serial.print(u8SwitchValues[idx]);
+    Serial.print("/");
+  }
+  ////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  Serial.println(".");
+#endif
 }
