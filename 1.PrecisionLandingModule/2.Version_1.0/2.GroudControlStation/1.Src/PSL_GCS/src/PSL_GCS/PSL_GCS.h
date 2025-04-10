@@ -1,0 +1,89 @@
+
+
+#include "../Joystick/Joystick.h"
+#include "../Button/Button.h"
+#include "stdint.h"
+
+#define JOY_BASE_PIN       A0
+#define BTN_BASE_PIN       3
+#define SIG_BASE_PIN       7
+
+
+#define COUNT_JOYSTICK_MAX 4
+#define COUNT_BUTTON_MAX   2
+#define COUNT_SIGNAL_MAX   2
+
+typedef struct
+{
+    uint16_t PIN_XAxis;
+
+    uint16_t PIN_RudderAxis;
+    uint16_t PIN_YAxis;
+    uint16_t PIN_ThrottleAxis;
+    
+    bool HW_INVERT_RUDDER;
+    bool HW_INVERT_THROTTLE;
+    bool HW_INVERT_X;
+    bool HW_INVERT_Y;
+
+} joystick_hw_config_t;
+
+enum SequenceJoystickValues {
+    XAxis, YAxis, RudderAxis, ThrottleAxis
+};
+
+enum SequenceSignalValues {
+    Up, Down, Left, Right
+};
+
+class PSL_GCS_
+{
+private:
+    bool State_diffJoysticks;
+    bool State_diffButtons;
+    bool State_diffSignals;
+
+    uint16_t Value_Joysticks[COUNT_JOYSTICK_MAX];
+    bool     Value_Buttons[COUNT_BUTTON_MAX];
+    uint16_t Value_Signals[COUNT_SIGNAL_MAX];
+    
+    joystick_hw_config_t hw_config = {
+        .PIN_XAxis          = A0,
+        .PIN_RudderAxis     = A1,
+        .PIN_YAxis          = A3,
+        .PIN_ThrottleAxis   = A2,
+    
+        .HW_INVERT_RUDDER   = true,
+        .HW_INVERT_THROTTLE = false,
+        .HW_INVERT_X        = false,
+        .HW_INVERT_Y        = false
+    };
+
+    
+public:
+    PSL_GCS_();
+
+    Joystick_ joystick;
+
+    Button_ btn_mission1;
+    Button_ btn_mission2;
+
+    uint16_t Value_Update_Joysticks[COUNT_JOYSTICK_MAX];
+    uint16_t Value_Update_Buttons[COUNT_BUTTON_MAX];
+    uint16_t Value_Update_Signals[COUNT_SIGNAL_MAX];    
+    
+    void getJoystickValues();
+    void getButtonValues();
+    void getSignalValues();
+/*
+    void updateJoystickValues();
+    void updateButtonValues();
+    void updateSignalValues();
+*/
+    uint16_t invertValue(uint16_t value);
+
+    bool getDiffState();
+    void printCurrentValues();
+};
+
+
