@@ -5,7 +5,7 @@
 #include "stdint.h"
 
 #define JOY_BASE_PIN       A0
-#define BTN_BASE_PIN       3
+#define BTN_BASE_PIN       2
 #define SIG_BASE_PIN       7
 
 
@@ -36,9 +36,14 @@ enum SequenceSignalValues {
     Up, Down, Left, Right
 };
 
+enum Mode{
+    TransData, DontTransData
+};
+
 class PSL_GCS_
 {
 private:
+    bool State_mode;
     bool State_diffJoysticks;
     bool State_diffButtons;
     bool State_diffSignals;
@@ -46,6 +51,8 @@ private:
     uint16_t Value_Joysticks[COUNT_JOYSTICK_MAX];
     bool     Value_Buttons[COUNT_BUTTON_MAX];
     uint16_t Value_Signals[COUNT_SIGNAL_MAX];
+
+    uint32_t Time_modeChange;
     
     joystick_hw_config_t hw_config = {
         .PIN_XAxis          = A0,
@@ -75,13 +82,14 @@ public:
     void getJoystickValues();
     void getButtonValues();
     void getSignalValues();
+    bool getStateMode();
 
     void updateJoystickValues();
-    void processButton();
+    void processModeChange();
     void processSignal();
 
     void sendGcsData();
-
+    
     uint16_t invertValue(uint16_t value);
 
     bool getDiffState();

@@ -4,26 +4,49 @@
 
 Button_::Button_(uint8_t pin){
     PIN = pin;
-    pinMode(PIN, INPUT);
+    pinMode(PIN, INPUT_PULLUP);
 }
 
-void Button_::ISR_isFalling(){
-    Time_pressStart++; 
+void Button_::ISR_isChange(){
+    if(digitalRead(PIN)) State_Button = Not_pushed; 
+    else State_Button = Pushed;
 }
 
-void Button_::ISR_isRising(){
-    if(Time_pressStart >= 1000){
-        if(State_isButtonPushed == false) State_isButtonPushed = true;
+void Button_::debounceButton(){
+    if(State_Button == Pushed){
+        Time_pressStart++;
     }
-    else {
-        Time_pressStart      = 0;
-        State_isButtonPushed = false;
+    else{
+        if(Time_pressStart >= 10){
+            if(Time_pressStart >= ValidTime){
+                Serial.print("Detect user push button [");
+                Serial.print(PIN);
+                Serial.print("] while :");
+                Serial.println(Time_pressStart);
+                State_isButtonPushed = true;
+                Time_pressStart = 0;
+            }
+            else{
+                Serial.println("Not yet.. holding push state more...");
+                Time_pressStart = 0;
+            }
+        }
     }
 }
 
-bool Button_::getButtonState(){
+bool Button_::getButtonStateRealtime(){
+    return State_Button;
+}
+
+bool Button_::getButtonPushed(){
     return State_isButtonPushed;
 }
+
+void Button_::set_isPushedToFalse(){
+    State_isButtonPushed = false;
+}
+
+
 
 uint8_t Button_::returnPin(){
     return PIN;
