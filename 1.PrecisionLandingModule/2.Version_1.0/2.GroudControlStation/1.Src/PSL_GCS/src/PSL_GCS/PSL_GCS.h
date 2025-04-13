@@ -29,7 +29,7 @@ typedef struct
 } joystick_hw_config_t;
 
 enum SequenceJoystickValues {
-    XAxis, YAxis, RudderAxis, ThrottleAxis
+    XAxis, RudderAxis, YAxis, ThrottleAxis
 };
 
 enum SequenceSignalValues {
@@ -69,21 +69,24 @@ public:
     Button_ btn_mission2;
 
     uint16_t Value_Update_Joysticks[COUNT_JOYSTICK_MAX];
-    uint16_t Value_Update_Buttons[COUNT_BUTTON_MAX];
+    bool Value_Update_Buttons[COUNT_BUTTON_MAX];
     uint16_t Value_Update_Signals[COUNT_SIGNAL_MAX];    
     
     void getJoystickValues();
     void getButtonValues();
     void getSignalValues();
-/*
+
     void updateJoystickValues();
-    void updateButtonValues();
-    void updateSignalValues();
-*/
+    void processButton();
+    void processSignal();
+
+    void sendGcsData();
+
     uint16_t invertValue(uint16_t value);
 
     bool getDiffState();
     void printCurrentValues();
+
 };
 
 

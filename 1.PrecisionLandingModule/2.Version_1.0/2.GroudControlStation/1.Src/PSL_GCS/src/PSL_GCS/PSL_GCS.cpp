@@ -47,12 +47,45 @@ void PSL_GCS_::getSignalValues(){
     }   
 }
 
+void PSL_GCS_::updateJoystickValues(){
+    if(hw_config.HW_INVERT_RUDDER) joystick.setRudder(invertValue(Value_Joysticks[RudderAxis]));
+    else joystick.setRudder(Value_Joysticks[RudderAxis]);
+
+    if(hw_config.HW_INVERT_THROTTLE) joystick.setThrottle(invertValue(Value_Joysticks[ThrottleAxis]));
+    else joystick.setThrottle(Value_Joysticks[ThrottleAxis]);
+
+    if(hw_config.HW_INVERT_X) joystick.setXAxis(invertValue(Value_Joysticks[XAxis]));
+    else joystick.setXAxis(Value_Joysticks[XAxis]);
+
+    if(hw_config.HW_INVERT_Y) joystick.setYAxis(invertValue(Value_Joysticks[YAxis]));
+    else joystick.setYAxis(Value_Joysticks[YAxis]);
+}
+
+void PSL_GCS_::processButton(){
+    if(Value_Buttons[0] = true) // Process 1
+    if(Value_Buttons[1] = true) // Process 2
+    
+    
+}
+
+void PSL_GCS_::processSignal(){}
+
+void PSL_GCS_::sendGcsData(){
+    joystick.sendState();
+}
+
+
+
+
 uint16_t PSL_GCS_::invertValue(uint16_t value){
     return (1023 - value);
 }
 
 bool PSL_GCS_::getDiffState(){
     if(State_diffJoysticks || State_diffButtons || State_diffSignals){
+        State_diffJoysticks = false;
+        State_diffButtons   = false;
+        State_diffSignals   = false;
         return true;
     }
     else return false;
@@ -61,16 +94,16 @@ bool PSL_GCS_::getDiffState(){
 void PSL_GCS_::printCurrentValues(){
 
     Serial.print(" RudderAxis [");
-    Serial.print(invertValue(Value_Joysticks[1]));
+    Serial.print(invertValue(Value_Joysticks[RudderAxis]));
         
     Serial.print("] ThrottleAxis [");
-    Serial.print(Value_Joysticks[3]);
+    Serial.print(Value_Joysticks[ThrottleAxis]);
     
     Serial.print("] XAxis [");
-    Serial.print(Value_Joysticks[0]);
+    Serial.print(Value_Joysticks[XAxis]);
 
     Serial.print("] YAxis [");
-    Serial.print(invertValue(Value_Joysticks[2]));
+    Serial.print(invertValue(Value_Joysticks[YAxis]));
     
     Serial.print("] btn_mission1 [");
     Serial.print(Value_Buttons[0]);
