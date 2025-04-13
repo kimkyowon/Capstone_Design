@@ -37,7 +37,7 @@ void loop(){
       CapstoneGCS.sendGcsData();
     }
     //CapstoneGCS.updateSignalValues();    
-    CapstoneGCS.printCurrentValues();
+    //CapstoneGCS.printCurrentValues();
   }else {
     countHeartBeat++;
     if(countHeartBeat >= 1000){
