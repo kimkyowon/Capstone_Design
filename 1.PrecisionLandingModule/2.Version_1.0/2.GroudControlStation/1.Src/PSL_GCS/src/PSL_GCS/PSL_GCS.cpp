@@ -15,9 +15,9 @@ void PSL_GCS_::getJoystickValues(){
         Value_Update_Joysticks[index] = analogRead(JOY_BASE_PIN + index);
         if(Value_Update_Joysticks[index] != Value_Joysticks[index]){
             Value_Joysticks[index] = Value_Update_Joysticks[index];
-            State_diffJoysticks = true;
+            State_diffJoysticks |= true;
         }
-        else State_diffJoysticks = false;
+        else State_diffJoysticks |= false;
     }   
 }
 
@@ -37,15 +37,8 @@ void PSL_GCS_:: getButtonValues(){
     }    
 }
 
-void PSL_GCS_::getSignalValues(){
-    for(int index = 0; index < COUNT_SIGNAL_MAX; index++){
-        Value_Update_Signals[index] = analogRead(SIG_BASE_PIN + index);
-        if(Value_Update_Signals[index] != Value_Update_Signals[index]){
-            Value_Update_Signals[index] = Value_Update_Signals[index];
-            State_diffSignals = true;
-        }
-        else State_diffSignals = false;
-    }   
+void PSL_GCS_::getSignalValues(byte command){
+    Value_Update_Signals = command;
 }
 
 bool PSL_GCS_::getStateMode(){
@@ -68,26 +61,60 @@ void PSL_GCS_::updateJoystickValues(){
 
 void PSL_GCS_::processModeChange(){
     if(btn_mission1.getButtonPushed()) {
+        setDroneStop();
         State_mode = !State_mode;
-        Serial.print("Mode Change!! [ ");
-        if(State_mode) Serial.print("TransData");
-        else Serial.print("DontTransData");
+        // Serial.print("Mode Change!! [ ");
+        // if(State_mode) Serial.print("TransData");
+        // else Serial.print("DontTransData");
 
-        Serial.print(" ] to [ ");
-        if(State_mode) Serial.println("DontTransData ]");
-        else Serial.println("TransData ]");
+        // Serial.print(" ] to [ ");
+        // if(State_mode) Serial.println("DontTransData ]");
+        // else Serial.println("TransData ]");
 
         btn_mission1.set_isPushedToFalse();
     }
 }
 
-void PSL_GCS_::processSignal(){}
+void PSL_GCS_::processSignal(){
+    if(Value_Signals != Value_Update_Signals){
+        Value_Signals = Value_Update_Signals;
+        State_diffSignals = true;
+    } else State_diffSignals = false;
+
+    if(State_diffSignals == true){
+        switch(Value_Signals){
+            case D_Foward:
+                joystick.setYAxis(ANALOG_MIDDLE_VAL+10);
+                break;
+            case D_Backward:
+                joystick.setYAxis(ANALOG_MIDDLE_VAL-10);
+                break;     
+            case D_Left:
+                joystick.setXAxis(ANALOG_MIDDLE_VAL-10);    
+                break;
+            case D_Right:
+               joystick.setXAxis(ANALOG_MIDDLE_VAL+10);
+                break;
+        }
+        sendGcsData();
+    }
+}
+
+void PSL_GCS_::setJoystickValueToMiddle(){
+    joystick.setRudder(ANALOG_MIDDLE_VAL);
+    joystick.setThrottle(ANALOG_MIDDLE_VAL);
+    joystick.setXAxis(ANALOG_MIDDLE_VAL);
+    joystick.setYAxis(ANALOG_MIDDLE_VAL);
+}
 
 void PSL_GCS_::sendGcsData(){
     joystick.sendState();
 }
 
-
+void PSL_GCS_::setDroneStop(){
+    setJoystickValueToMiddle();
+    sendGcsData();
+}
 
 
 uint16_t PSL_GCS_::invertValue(uint16_t value){
@@ -95,11 +122,9 @@ uint16_t PSL_GCS_::invertValue(uint16_t value){
 }
 
 bool PSL_GCS_::getDiffState(){
-    if(State_diffJoysticks || State_diffButtons || State_diffSignals){
-    //if( State_diffButtons){    
+    if(State_diffJoysticks || State_diffButtons){
         State_diffJoysticks = false;
         State_diffButtons   = false;
-        State_diffSignals   = false;
         return true;
     }
     else return false;

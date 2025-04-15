@@ -7,11 +7,10 @@
 #define JOY_BASE_PIN       A0
 #define BTN_BASE_PIN       2
 #define SIG_BASE_PIN       7
-
-
 #define COUNT_JOYSTICK_MAX 4
 #define COUNT_BUTTON_MAX   2
 #define COUNT_SIGNAL_MAX   2
+#define ANALOG_MIDDLE_VAL  512
 
 typedef struct
 {
@@ -40,6 +39,10 @@ enum Mode{
     TransData, DontTransData
 };
 
+enum AutoMove{
+    D_Foward = 0x01, D_Backward, D_Left, D_Right
+};
+
 class PSL_GCS_
 {
 private:
@@ -50,7 +53,7 @@ private:
 
     uint16_t Value_Joysticks[COUNT_JOYSTICK_MAX];
     bool     Value_Buttons[COUNT_BUTTON_MAX];
-    uint16_t Value_Signals[COUNT_SIGNAL_MAX];
+    byte Value_Signals;
 
     uint32_t Time_modeChange;
     
@@ -77,19 +80,20 @@ public:
 
     uint16_t Value_Update_Joysticks[COUNT_JOYSTICK_MAX];
     bool Value_Update_Buttons[COUNT_BUTTON_MAX];
-    uint16_t Value_Update_Signals[COUNT_SIGNAL_MAX];    
+    byte Value_Update_Signals;    
     
     void getJoystickValues();
     void getButtonValues();
-    void getSignalValues();
+    void getSignalValues(byte command);
     bool getStateMode();
 
     void updateJoystickValues();
     void processModeChange();
     void processSignal();
-
+    void setJoystickValueToMiddle();
     void sendGcsData();
-    
+    void setDroneStop();
+
     uint16_t invertValue(uint16_t value);
 
     bool getDiffState();
