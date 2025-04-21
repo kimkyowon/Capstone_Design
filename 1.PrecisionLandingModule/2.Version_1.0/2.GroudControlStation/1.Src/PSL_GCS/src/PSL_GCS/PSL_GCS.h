@@ -5,12 +5,13 @@
 #include "stdint.h"
 
 #define JOY_BASE_PIN       A0
-#define BTN_BASE_PIN       2
+#define BTN_BASE_PIN       0
 #define SIG_BASE_PIN       7
 #define COUNT_JOYSTICK_MAX 4
 #define COUNT_BUTTON_MAX   2
 #define COUNT_SIGNAL_MAX   2
 #define ANALOG_MIDDLE_VAL  512
+#define ANALOG_MOVE_VAL    50
 
 typedef struct
 {

@@ -10,7 +10,7 @@ byte command;
 static void btn1ChangeISR();
 static void btn2ChangeISR();
 static void InturruptSignal();
-void receiveEvent(){ byte command = Wire.read();}
+void receiveEvent();
 
 void setup(){
   delay(10);
@@ -77,4 +77,10 @@ static void btn2ChangeISR() {
 }
 static void InturruptSignal(){
   CapstoneGCS.setDroneStop();
+}
+
+void receiveEvent(){
+  command = Wire.read();
+  // Serial.print("receiveEvent() : ");
+  // Serial.println(command);
 }

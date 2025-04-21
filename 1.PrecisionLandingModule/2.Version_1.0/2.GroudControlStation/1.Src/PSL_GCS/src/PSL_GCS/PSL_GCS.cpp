@@ -81,19 +81,23 @@ void PSL_GCS_::processSignal(){
         State_diffSignals = true;
     } else State_diffSignals = false;
 
-    if(State_diffSignals == true){
+    if(State_diffSignals == true ){
+        Serial.print("Get Mission!! [ ");
+        Serial.print(Value_Signals);
+        Serial.println(" ]");
+
         switch(Value_Signals){
             case D_Foward:
-                joystick.setYAxis(ANALOG_MIDDLE_VAL+10);
+                joystick.setYAxis(ANALOG_MIDDLE_VAL + ANALOG_MOVE_VAL);
                 break;
             case D_Backward:
-                joystick.setYAxis(ANALOG_MIDDLE_VAL-10);
+                joystick.setYAxis(ANALOG_MIDDLE_VAL - ANALOG_MOVE_VAL);
                 break;     
             case D_Left:
-                joystick.setXAxis(ANALOG_MIDDLE_VAL-10);    
+                joystick.setXAxis(ANALOG_MIDDLE_VAL - ANALOG_MOVE_VAL);    
                 break;
             case D_Right:
-               joystick.setXAxis(ANALOG_MIDDLE_VAL+10);
+               joystick.setXAxis(ANALOG_MIDDLE_VAL + ANALOG_MOVE_VAL);
                 break;
         }
         sendGcsData();
