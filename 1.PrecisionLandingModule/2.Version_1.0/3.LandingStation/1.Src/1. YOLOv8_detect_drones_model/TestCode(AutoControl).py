@@ -5,11 +5,9 @@ import smbus
 import RPi.GPIO as GPIO
 import time
 
-# I2C 설정
-bus = smbus.SMBus(1)  # I2C 버스 번호
-address = 0x08  # 아두이노 마이크로의 슬레이브 주소
+bus = smbus.SMBus(1)  
+address = 0x08  
 
-# 명령 정의
 COMMAND_FORWARD = 0x01
 COMMAND_BACKWARD = 0x02
 COMMAND_LEFT = 0x03
@@ -18,13 +16,12 @@ COMMAND_RIGHT = 0x04
 def send_command(command):
     bus.write_byte(address, command)
 
-# 인터럽트 핀 설정
-interruptPin = 17  # GPIO 17을 사용
+interruptPin = 17  
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(interruptPin, GPIO.OUT)
 
 def send_stop_signal():
-    GPIO.output(interruptPin, GPIO.HIGH)  # 인터럽트 신호 전송
+    GPIO.output(interruptPin, GPIO.HIGH)
     time.sleep(0.1)
     GPIO.output(interruptPin, GPIO.LOW)
 
@@ -63,6 +60,11 @@ while camera_on:
     cv2.putText(frame, text, (text_x, text_y), font, 1, (255, 255, 255), 2, cv2.LINE_AA)
 
     boxes = results[0].boxes.xyxy
+
+     if len(boxes) == 0:
+        cv2.putText(frame, "No object detected! Sending stop signal...", (10, 80), font, 0.5, (0, 0, 255), 1)
+        send_stop_signal()
+        
     for box in boxes:
         x_min, y_min, x_max, y_max = box[0].item(), box[1].item(), box[2].item(), box[3].item()
         
@@ -86,7 +88,7 @@ while camera_on:
             cv2.putText(frame, "Bounding box is centered within margin. Turning off the camera...", (10, 60), font, 0.5, (0, 255, 0), 1)
             cv2.waitKey(2000)  
             camera_on = False  
-            send_stop_signal()  # 정지 명령 전송
+            send_stop_signal() 
         else:
             if diff_x < margin:
                 horizontal_direction = "center"
@@ -108,32 +110,32 @@ while camera_on:
             cv2.putText(frame, f"Vertical: {vertical_direction}", (10, 40), font, 0.5, (0, 0, 255), 1)
             cv2.putText(frame, "Bounding box is not centered. Camera remains on.", (10, 60), font, 0.5, (0, 255, 0), 1)
 
-            # 명령 전송
             if vertical_direction == "down":
                 send_command(COMMAND_FORWARD)
-                if diff_y < 10:  # 목표 위치에 도달했을 때 정지
+                if diff_y < 10:  
                     send_stop_signal()
                     vertical_direction = "center"
             elif vertical_direction == "up":
                 send_command(COMMAND_BACKWARD)
-                if diff_y < 10:  # 목표 위치에 도달했을 때 정지
+                if diff_y < 10: 
                     send_stop_signal()
                     vertical_direction = "center"
             if horizontal_direction == "right":
                 send_command(COMMAND_RIGHT)
-                if diff_x < 10:  # 목표 위치에 도달했을 때 정지
+                if diff_x < 10:  
                     send_stop_signal()
                     horizontal_direction = "center"
             elif horizontal_direction == "left":
                 send_command(COMMAND_LEFT)
-                if diff_x < 10:  # 목표 위치에 도달했을 때 정지
+                if diff_x < 10: 
                     send_stop_signal()
                     horizontal_direction = "center"
 
     cv2.imshow("Camera", frame)
 
+
     if cv2.waitKey(1) == ord("q"):
-        send_stop_signal()  # 정지 명령 전송
+        send_stop_signal()  
         break
 
 cv2.destroyAllWindows()
