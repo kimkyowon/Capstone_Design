@@ -4,14 +4,18 @@
 #include "../Button/Button.h"
 #include "stdint.h"
 
-#define JOY_BASE_PIN       A0
-#define BTN_BASE_PIN       0
-#define SIG_BASE_PIN       7
-#define COUNT_JOYSTICK_MAX 4
-#define COUNT_BUTTON_MAX   2
-#define COUNT_SIGNAL_MAX   2
-#define ANALOG_MIDDLE_VAL  512
-#define ANALOG_MOVE_VAL    50
+#define JOY_BASE_PIN            A0
+#define BTN_BASE_PIN            0
+#define SIG_BASE_PIN            7
+#define COUNT_JOYSTICK_MAX      4
+#define COUNT_BUTTON_MAX        2
+#define COUNT_SIGNAL_MAX        2
+
+#define ANALOG_MIN_VAL          0
+#define ANALOG_MIDDLE_VAL       512
+#define ANALOG_MAX_VAL          1023
+#define ANALOG_MOVE_VAL         50
+#define MARGIN_ARMING_DISARMING 30
 
 typedef struct
 {
@@ -41,7 +45,7 @@ enum Mode{
 };
 
 enum AutoMove{
-    D_Foward = 0x01, D_Backward, D_Left, D_Right
+    D_Foward = 0x01, D_Backward, D_Left, D_Right,D_Land
 };
 
 class PSL_GCS_

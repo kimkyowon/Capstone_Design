@@ -46,17 +46,34 @@ bool PSL_GCS_::getStateMode(){
 } 
 
 void PSL_GCS_::updateJoystickValues(){
-    if(hw_config.HW_INVERT_RUDDER) joystick.setRudder(invertValue(Value_Joysticks[RudderAxis]));
-    else joystick.setRudder(Value_Joysticks[RudderAxis]);
+    uint16_t TempValueArray[COUNT_JOYSTICK_MAX]; // XAxis, RudderAxis, YAxis, ThrottleAxis
+    for(int i = 0; i < COUNT_JOYSTICK_MAX; i++) TempValueArray[i] = Value_Joysticks[i];
 
-    if(hw_config.HW_INVERT_THROTTLE) joystick.setThrottle(invertValue(Value_Joysticks[ThrottleAxis]));
-    else joystick.setThrottle(Value_Joysticks[ThrottleAxis]);
-
-    if(hw_config.HW_INVERT_X) joystick.setXAxis(invertValue(Value_Joysticks[XAxis]));
-    else joystick.setXAxis(Value_Joysticks[XAxis]);
-
-    if(hw_config.HW_INVERT_Y) joystick.setYAxis(invertValue(Value_Joysticks[YAxis]));
-    else joystick.setYAxis(Value_Joysticks[YAxis]);
+    // check flip or bypass
+    if(hw_config.HW_INVERT_RUDDER) TempValueArray[RudderAxis] = invertValue(TempValueArray[RudderAxis]);
+    if(hw_config.HW_INVERT_THROTTLE) TempValueArray[ThrottleAxis] = invertValue(TempValueArray[ThrottleAxis]);
+    if(hw_config.HW_INVERT_X) TempValueArray[XAxis] = invertValue(TempValueArray[XAxis]);
+    if(hw_config.HW_INVERT_Y) TempValueArray[YAxis] = invertValue(TempValueArray[YAxis]);
+    
+    // check arming or disarming
+    if(TempValueArray[ThrottleAxis] <= (ANALOG_MIN_VAL + MARGIN_ARMING_DISARMING) ){
+        if(TempValueArray[RudderAxis] >= (ANALOG_MAX_VAL - MARGIN_ARMING_DISARMING) ){
+            // MAKE ARMING
+            TempValueArray[ThrottleAxis] = ANALOG_MIN_VAL;
+            TempValueArray[RudderAxis]   = ANALOG_MAX_VAL;
+        }
+        else if(TempValueArray[RudderAxis] <= (ANALOG_MIN_VAL + MARGIN_ARMING_DISARMING) ){
+            // MAKE DISARMING
+            TempValueArray[ThrottleAxis] = ANALOG_MIN_VAL;
+            TempValueArray[RudderAxis]   = ANALOG_MIN_VAL;
+        }
+    }
+    
+    // final set
+    joystick.setRudder(TempValueArray[RudderAxis]);
+    joystick.setThrottle(TempValueArray[ThrottleAxis]);
+    joystick.setXAxis(TempValueArray[XAxis]);
+    joystick.setYAxis(TempValueArray[YAxis]);
 }
 
 void PSL_GCS_::processModeChange(){
@@ -97,7 +114,10 @@ void PSL_GCS_::processSignal(){
                 joystick.setXAxis(ANALOG_MIDDLE_VAL - ANALOG_MOVE_VAL);    
                 break;
             case D_Right:
-               joystick.setXAxis(ANALOG_MIDDLE_VAL + ANALOG_MOVE_VAL);
+                joystick.setXAxis(ANALOG_MIDDLE_VAL + ANALOG_MOVE_VAL);
+                break;
+            case D_Land:
+                joystick.setThrottle(ANALOG_MIDDLE_VAL + ANALOG_MOVE_VAL);
                 break;
         }
         sendGcsData();
