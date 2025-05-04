@@ -8,10 +8,11 @@ import time
 bus = smbus.SMBus(1)  
 address = 0x08  
 
-COMMAND_FORWARD = 0x01
+COMMAND_FORWARD  = 0x01
 COMMAND_BACKWARD = 0x02
-COMMAND_LEFT = 0x03
-COMMAND_RIGHT = 0x04
+COMMAND_LEFT     = 0x03
+COMMAND_RIGHT    = 0x04
+COMMAND_LAND     = 0x05
 
 def send_command(command):
     bus.write_byte(address, command)
@@ -86,6 +87,7 @@ while camera_on:
 
         if diff_x < margin and diff_y < margin:
             cv2.putText(frame, "Bounding box is centered within margin. Turning off the camera...", (10, 60), font, 0.5, (0, 255, 0), 1)
+            send_command(COMMAND_LAND)
             cv2.waitKey(2000)  
             camera_on = False  
             send_stop_signal() 
