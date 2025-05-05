@@ -22,10 +22,12 @@ void PSL_GCS_::getJoystickValues(){
 }
 
 void PSL_GCS_:: getButtonValues(){
-    State_diffButtons = false;
-
-    Value_Update_Buttons[0] = btn_mission1.getButtonStateRealtime();
-    Value_Update_Buttons[1] = btn_mission2.getButtonStateRealtime();
+    // if want realtime value
+    // Value_Update_Buttons[0] = btn_mission1.getButtonStateRealtime();
+    // Value_Update_Buttons[1] = btn_mission2.getButtonStateRealtime();
+    
+    Value_Update_Buttons[0] = btn_mission1.getButtonPushed();
+    Value_Update_Buttons[1] = btn_mission2.getButtonPushed();
     
     for(int index = 0; index < COUNT_BUTTON_MAX; index++){
         if(Value_Update_Buttons[index] != Value_Buttons[index]){
@@ -74,6 +76,9 @@ void PSL_GCS_::updateJoystickValues(){
     joystick.setThrottle(TempValueArray[ThrottleAxis]);
     joystick.setXAxis(TempValueArray[XAxis]);
     joystick.setYAxis(TempValueArray[YAxis]);
+    for(int i = 0; i < COUNT_BUTTON_MAX; i++){
+        joystick.setButton(i,Value_Buttons[i]);
+    }
 }
 
 void PSL_GCS_::processModeChange(){
@@ -87,10 +92,19 @@ void PSL_GCS_::processModeChange(){
         // Serial.print(" ] to [ ");
         // if(State_mode) Serial.println("DontTransData ]");
         // else Serial.println("TransData ]");
-
         btn_mission1.set_isPushedToFalse();
     }
 }
+
+// void PSL_GCS_::processRTL(){
+//     if(btn_mission2.getButtonPushed()){
+//         joystick.setButton(2,1);
+//         sendGcsData();
+//         btn_mission2.set_isPushedToFalse();
+//     }else{
+//         joystick.setButton(2,0);
+//     }
+// }
 
 void PSL_GCS_::processSignal(){
     if(Value_Signals != Value_Update_Signals){

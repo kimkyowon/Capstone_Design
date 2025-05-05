@@ -27,8 +27,10 @@ void Button_::debounceButton(){
                 Time_pressStart = 0;
             }
             else{
-                Serial.println("Not yet.. holding push state more...");
+                Serial.print(Time_pressStart);
+                Serial.println(" Not yet.. holding push state more...");
                 Time_pressStart = 0;
+                set_isPushedToFalse();
             }
         }
     }

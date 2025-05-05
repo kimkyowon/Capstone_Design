@@ -2,7 +2,7 @@
 #define BUTTON_H
 #include "stdint.h"
 
-#define ValidTime 1000
+#define ValidTime 3000
 
 enum StateButton_{
     Pushed, Not_pushed
