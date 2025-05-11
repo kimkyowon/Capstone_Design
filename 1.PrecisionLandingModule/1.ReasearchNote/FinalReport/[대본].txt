@@ -1,0 +1,27 @@
+[대본]
+
+<Slide6>
+솔루션을 설명드리기 전 기본적인 구조에 대해 먼저 말씀드리겠습니다.
+
+현재 착륙 시스템은 왼쪽 그림처럼 드론에 부착된 GPS 모듈을 통해 도착지의 GPS 좌표 데이터와 동일해질 수 있도록 움직인 후 착륙하는 과정을 거칩니다.
+
+우측 그림은 GPS 정보 없이 AI가 드론을 인식하여 자동 랜딩 과정을 수행할 수 있는 솔루션입니다.
+
+<Slide7>
+상세 시스템 구조에 대해 설명드리겠습니다.
+
+기본적으로 Drone, PC, Joystick, Landing Station 네 가지로 구분되고
+아래는 해당 파트의 핵심 부품을 나열하였습니다.
+
+요약하자면 PC App 을 통해 Drone 과 Mavlink Protocol 기반 원격 통신을 진행하여 Drone을 띄운 후
+Landing Station의 카메라에 감지될 수 있는 곳에 위치시키면 Landing Station은 
+자동으로 Camera를 통해 Yolo로 인식된 드론의 위치를 파악하여 Joystick 측에 제어명령을 전달하여 착륙 위치를 보정 후 착륙 과정을 진행하게 됩니다.
+
+<Slide8>
+
+<Slide6>
+<Slide6>
+<Slide6>
+<Slide6>
+<Slide6>
+<Slide6>
