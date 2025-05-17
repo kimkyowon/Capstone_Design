@@ -14,17 +14,22 @@ COMMAND_LEFT     = 0x03
 COMMAND_RIGHT    = 0x04
 COMMAND_LAND     = 0x05
 
-def send_command(command):
-    bus.write_byte(address, command)
-
 interruptPin = 17  
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(interruptPin, GPIO.OUT)
+
+def send_command(command, distance=0):
+    mapped_dist = map_value(distance, 0, 640) 
+    bus.write_i2c_block_data(address, command, [mapped_dist])
 
 def send_stop_signal():
     GPIO.output(interruptPin, GPIO.HIGH)
     time.sleep(0.1)
     GPIO.output(interruptPin, GPIO.LOW)
+
+def map_value(value, orig_min, orig_max, new_min=1, new_max=200):
+    clamped = max(orig_min, min(value, orig_max))
+    return int(new_min + (clamped - orig_min) * (new_max - new_min) / (orig_max - orig_min))
 
 picam2 = Picamera2()
 picam2.preview_configuration.main.size = (1280, 1280)
@@ -87,7 +92,7 @@ while camera_on:
 
         if diff_x < margin and diff_y < margin:
             cv2.putText(frame, "Bounding box is centered within margin. Turning off the camera...", (10, 60), font, 0.5, (0, 255, 0), 1)
-            send_command(COMMAND_LAND)
+            send_command(COMMAND_LAND,200)
             cv2.waitKey(2000)  
             camera_on = False  
             send_stop_signal() 
@@ -113,22 +118,22 @@ while camera_on:
             cv2.putText(frame, "Bounding box is not centered. Camera remains on.", (10, 60), font, 0.5, (0, 255, 0), 1)
 
             if vertical_direction == "down":
-                send_command(COMMAND_FORWARD)
+                send_command(COMMAND_FORWARD, diff_y)
                 if diff_y < 10:  
                     send_stop_signal()
                     vertical_direction = "center"
             elif vertical_direction == "up":
-                send_command(COMMAND_BACKWARD)
+                send_command(COMMAND_BACKWARD, diff_y)
                 if diff_y < 10: 
                     send_stop_signal()
                     vertical_direction = "center"
             if horizontal_direction == "right":
-                send_command(COMMAND_RIGHT)
+                send_command(COMMAND_RIGHT, diff_x)
                 if diff_x < 10:  
                     send_stop_signal()
                     horizontal_direction = "center"
             elif horizontal_direction == "left":
-                send_command(COMMAND_LEFT)
+                send_command(COMMAND_LEFT, diff_x)
                 if diff_x < 10: 
                     send_stop_signal()
                     horizontal_direction = "center"

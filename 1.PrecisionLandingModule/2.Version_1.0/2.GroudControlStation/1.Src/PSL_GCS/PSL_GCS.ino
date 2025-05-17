@@ -6,6 +6,7 @@
 PSL_GCS_ CapstoneGCS;
 uint16_t countHeartBeat;
 byte command;
+byte distance;
 
 static void btn1ChangeISR();
 static void btn2ChangeISR();
@@ -50,6 +51,7 @@ void loop(){
       CapstoneGCS.updateJoystickValues();
       //CapstoneGCS.printCurrentValues();
       CapstoneGCS.sendGcsData();
+      
     }else{
       countHeartBeat++;
       if(countHeartBeat >= 1000){
@@ -58,7 +60,7 @@ void loop(){
       }
     }
   }else{     // CapstoneGCS.getStateMode() == DontTransData "AutoMode"
-    CapstoneGCS.getSignalValues(command);
+    CapstoneGCS.getSignalValues(command, distance);
     CapstoneGCS.processSignal();
   } 
   
@@ -80,7 +82,8 @@ static void InturruptSignal(){
 }
 
 void receiveEvent(){
-  command = Wire.read();
-  // Serial.print("receiveEvent() : ");
-  // Serial.println(command);
+  if(Wire.available() >= 2){
+    command  = Wire.read();
+    distance = Wire.read(); 
+  }
 }

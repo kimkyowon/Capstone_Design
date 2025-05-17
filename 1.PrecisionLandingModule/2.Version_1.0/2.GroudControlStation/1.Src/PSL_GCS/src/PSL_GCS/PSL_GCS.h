@@ -14,7 +14,7 @@
 #define ANALOG_MIN_VAL          0
 #define ANALOG_MIDDLE_VAL       512
 #define ANALOG_MAX_VAL          1023
-#define ANALOG_MOVE_VAL         50
+#define ANALOG_MOVE_VAL         200
 #define MARGIN_ARMING_DISARMING 30
 
 typedef struct
@@ -59,6 +59,7 @@ private:
     uint16_t Value_Joysticks[COUNT_JOYSTICK_MAX];
     bool     Value_Buttons[COUNT_BUTTON_MAX];
     byte Value_Signals;
+    byte Value_Distances;
 
     uint32_t Time_modeChange;
     
@@ -85,11 +86,12 @@ public:
 
     uint16_t Value_Update_Joysticks[COUNT_JOYSTICK_MAX];
     bool Value_Update_Buttons[COUNT_BUTTON_MAX];
-    byte Value_Update_Signals;    
+    byte Value_Update_Signals;  
+    byte Value_Update_Distances;  
     
     void getJoystickValues();
     void getButtonValues();
-    void getSignalValues(byte command);
+    void getSignalValues(byte command, byte distance);
     bool getStateMode();
 
     void updateJoystickValues();

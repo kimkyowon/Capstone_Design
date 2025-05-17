@@ -39,8 +39,9 @@ void PSL_GCS_:: getButtonValues(){
     }    
 }
 
-void PSL_GCS_::getSignalValues(byte command){
-    Value_Update_Signals = command;
+void PSL_GCS_::getSignalValues(byte command, byte distance){
+    Value_Update_Signals   = command;
+    Value_Update_Distances = distance; 
 }
 
 bool PSL_GCS_::getStateMode(){
@@ -107,34 +108,52 @@ void PSL_GCS_::processModeChange(){
 // }
 
 void PSL_GCS_::processSignal(){
-    if(Value_Signals != Value_Update_Signals){
-        Value_Signals = Value_Update_Signals;
+    
+    if(Value_Signals != Value_Update_Signals || Value_Distances != Value_Update_Distances){
+        Value_Signals   = Value_Update_Signals;
+        Value_Distances = Value_Update_Distances;
+
         State_diffSignals = true;
     } else State_diffSignals = false;
 
     if(State_diffSignals == true ){
-        Serial.print("Get Mission!! [ ");
-        Serial.print(Value_Signals);
-        Serial.println(" ]");
-
+        // Serial.print("Get Mission!! [ ");
+        // Serial.print(Value_Signals);
+        // Serial.println(" ]");
+        setJoystickValueToMiddle();
+        
         switch(Value_Signals){
             case D_Foward:
-                joystick.setYAxis(ANALOG_MIDDLE_VAL + ANALOG_MOVE_VAL);
+                joystick.setYAxis(ANALOG_MIDDLE_VAL + Value_Distances);
+                Serial.print("Go Foward!!...");
                 break;
             case D_Backward:
-                joystick.setYAxis(ANALOG_MIDDLE_VAL - ANALOG_MOVE_VAL);
+                joystick.setYAxis(ANALOG_MIDDLE_VAL - Value_Distances);
+                Serial.print("Go Backward!!...");
                 break;     
             case D_Left:
-                joystick.setXAxis(ANALOG_MIDDLE_VAL - ANALOG_MOVE_VAL);    
+                joystick.setXAxis(ANALOG_MIDDLE_VAL - Value_Distances);    
+                Serial.print("Go Left!!...");
                 break;
             case D_Right:
-                joystick.setXAxis(ANALOG_MIDDLE_VAL + ANALOG_MOVE_VAL);
+                joystick.setXAxis(ANALOG_MIDDLE_VAL + Value_Distances);
+                Serial.print("Go Right!!...");
                 break;
             case D_Land:
-                joystick.setThrottle(ANALOG_MIDDLE_VAL + ANALOG_MOVE_VAL);
+                joystick.setThrottle(ANALOG_MIDDLE_VAL - Value_Distances);
+                Serial.print("Center...Landing start!!...");
                 break;
         }
+        Serial.print("Distance : [ ");
+        Serial.print(Value_Distances);
+        Serial.println(" ]");
+        
         sendGcsData();
+    }else {
+        if (Value_Signals == D_Land){
+            joystick.setThrottle(ANALOG_MIDDLE_VAL - Value_Distances);
+            sendGcsData();
+        }
     }
 }
 
