@@ -21,33 +21,6 @@ void PSL_GCS_::getJoystickValues(){
     }   
 }
 
-void PSL_GCS_:: getButtonValues(){
-    // if want realtime value
-    // Value_Update_Buttons[0] = btn_mission1.getButtonStateRealtime();
-    // Value_Update_Buttons[1] = btn_mission2.getButtonStateRealtime();
-    
-    Value_Update_Buttons[0] = btn_mission1.getButtonPushed();
-    Value_Update_Buttons[1] = btn_mission2.getButtonPushed();
-    
-    for(int index = 0; index < COUNT_BUTTON_MAX; index++){
-        if(Value_Update_Buttons[index] != Value_Buttons[index]){
-            Value_Buttons[index] = Value_Update_Buttons[index];
-            State_diffButtons |= true;
-            
-        }
-        else State_diffButtons |= false;
-    }    
-}
-
-void PSL_GCS_::getSignalValues(byte command, byte distance){
-    Value_Update_Signals   = command;
-    Value_Update_Distances = distance; 
-}
-
-bool PSL_GCS_::getStateMode(){
-    return State_mode;
-} 
-
 void PSL_GCS_::updateJoystickValues(){
     uint16_t TempValueArray[COUNT_JOYSTICK_MAX]; // XAxis, RudderAxis, YAxis, ThrottleAxis
     for(int i = 0; i < COUNT_JOYSTICK_MAX; i++) TempValueArray[i] = Value_Joysticks[i];
@@ -81,6 +54,32 @@ void PSL_GCS_::updateJoystickValues(){
         joystick.setButton(i,Value_Buttons[i]);
     }
 }
+
+void PSL_GCS_:: getButtonValues(){
+    
+    Value_Update_Buttons[0] = btn_mission1.getButtonPushed();
+    Value_Update_Buttons[1] = btn_mission2.getButtonPushed();
+    
+    for(int index = 0; index < COUNT_BUTTON_MAX; index++){
+        if(Value_Update_Buttons[index] != Value_Buttons[index]){
+            Value_Buttons[index] = Value_Update_Buttons[index];
+            State_diffButtons |= true;
+            
+        }
+        else State_diffButtons |= false;
+    }    
+}
+
+void PSL_GCS_::getSignalValues(byte command, byte distance){
+    Value_Update_Signals   = command;
+    Value_Update_Distances = distance; 
+}
+
+bool PSL_GCS_::getStateMode(){
+    return State_mode;
+} 
+
+
 
 void PSL_GCS_::processModeChange(){
     if(btn_mission1.getButtonPushed()) {

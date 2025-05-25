@@ -1,3 +1,4 @@
+SERIAL1_BAUD 57600
 
 COMPASS_ENABLE  1 -> 0
 COMPASS_USE       1 -> 0
@@ -8,8 +9,21 @@ ESC_CALIBRATION    0 -> 2
 SERVO_BLH_AUTO 0 -> 1
 MOT_PWM_TYPE  0 -> 6
 SERVO1_FUNCTION  33 -> 0
-SERVO9_FUNCTION = 33 (AUX OUT 단자의 출력을 켬)
+
+(AUX OUT 단자의 출력을 켜서 ESC 활성화)
+SERVO9_FUNCTION = 33 
 SERVO10_FUNCTION = 34
 SERVO11_FUNCTION = 35
 SERVO12_FUNCTION = 36
 
+
+한 거?
+HW 제작
+ESC PWM 테스트
+파라미터 세팅
+원격 연결 테스트
+모터 Calibration
+모터 테스트
+
+데모 테스트를 위해 한 것은 (1) HW 제작, (2) FC PWM 테스트, (3) FC_Parameter 세팅
+(4) Telemetry 테스트, (5) 모터 Calibration, (6) 모터 테스트 순으로 말씀드리겠습니다.
