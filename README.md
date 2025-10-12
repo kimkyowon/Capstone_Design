@@ -12,6 +12,12 @@
 ## 2. Tech Stack & Implementation (기술 스택 및 구현 핵심)
 
 ### 🛠️ 사용 기술
+| Category | Skills |
+| :--- | :--- |
+| **Language** | <img src="https://img.shields.io/badge/C++-00599C?style=for-the-badge&logo=c%2B%2B&logoColor=white" /> <img src="https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white" /> |
+| **AI/Vision** | <img src="https://img.shields.io/badge/YoloV8n-FF5733?style=for-the-badge&logo=yolo&logoColor=white" /> <img src="https://img.shields.io/badge/Google%20Colab-F9AB00?style=for-the-badge&logo=googlecolab&logoColor=white" /> |
+| **Dev Boards** | <img src="https://img.shields.io/badge/Arduino-00979D?style=for-the-badge&logo=arduino&logoColor=white" /> <img src="https://img.shields.io/badge/Raspberry%20Pi-A22846?style=for-the-badge&logo=raspberrypi&logoColor=white" /> |
+| **Tools & Platforms** | <img src="https://img.shields.io/badge/Mission%20Planner-3B5998?style=for-the-badge&logo=windows&logoColor=white" /> |
 
 ### 💡 구현 핵심 (F/W, SW 설계 포인트)
 
