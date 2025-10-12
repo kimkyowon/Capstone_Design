@@ -27,14 +27,12 @@
 | **Dev Boards** | <img src="https://img.shields.io/badge/Arduino-00979D?style=for-the-badge&logo=arduino&logoColor=white" /> <img src="https://img.shields.io/badge/Raspberry%20Pi-A22846?style=for-the-badge&logo=raspberrypi&logoColor=white" /> |
 | **Tools & Platforms** | <img src="https://img.shields.io/badge/Mission%20Planner-3B5998?style=for-the-badge&logo=windows&logoColor=white" /> |
 
-### 💡 구현 핵심 (F/W, SW 설계 포인트)
+### 💡 구현 핵심
 
--   **ㅁ**
-   - ㅁ
-   - ㅁ
-   - ㅁ
-
-
+-   **파트별 핵심 기능 / 포인트:**
+    - 착륙지 : 객체 인식 후 2차원 좌표데이터 값을 기준으로 조이스틱 측으로 이동 명령, 위급상황시 정지 명령 등을 전달.
+    - 조종기 : 실시간 조이스틱 및 버튼 값 갱신, 착륙지로부터 받은 데이터 처리, 모드 전환(자율 제어, 사용자 제어) 기능 탑재.
+    - 무인기 : 원활한 원격 데이터 송수신을 위해 안테나 간섭을 최소화한 구조 설계.
 
 -   **구조:**
     <img width="1438" height="815" alt="image" src="https://github.com/user-attachments/assets/a125bd92-3f40-4f59-853c-c70e11a120a1" />
@@ -51,7 +49,7 @@
     
 -   **배운 점 / 느낀 점:**
     > 개인 단위에서 어느정도 규모 있는 개발을 설계부터 자재 구매 이후 테스트 까지 전 과정을 겪어볼 수 있어서 좋았습니다.
-    > 
+    > 드론 관련 시스템에 대해 심도있게 배웠고 HW 세팅이 매우 중요하고 시간을 많이 잡아먹기에 다음 개발에서는 체계적인 계획을 세워야겠다는 것을 배웠습니다.
 
 
 ---
