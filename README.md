@@ -23,7 +23,9 @@
 
 -   **실시간 처리:** [DMA/Interrupt 활용, FreeRTOS Task 스케줄링 등 실시간성을 확보한 방법]
 -   **안정성 확보:** [Moore State Machine, Ring Buffer 기반 패킷 검사 등 시스템 견고성을 높인 방법]
--   **주요 구조:** [순수 SW의 경우, 주요 모듈이나 클래스 설계의 특징]
+-   **주요 구조:**
+    <img width="1438" height="815" alt="image" src="https://github.com/user-attachments/assets/a125bd92-3f40-4f59-853c-c70e11a120a1" />
+
 
 ## 3. Problem Solving & Learnings (문제 해결 및 배운 점)
 
