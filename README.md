@@ -6,7 +6,8 @@
 ## 1. Project Summary (프로젝트 요약)
 -   **개발 기간:** [2024.12.01] ~ [2025.05.21]
 -   **참여자   :** 김교원
--   **주요 성과:** MissionPlanner 학습, 드론 HW 구조 학습, Colab 환경에서의 Yolo 모델 학습 방법 학습, 캡스톤 경진대회 장려상
+-   **주요 성과:**
+    > MissionPlanner 학습, 드론 HW 구조 학습, Colab 환경에서의 Yolo 모델 학습 방법 학습, 캡스톤 경진대회 장려상
 
 ## 2. Tech Stack & Implementation (기술 스택 및 구현 핵심)
 
